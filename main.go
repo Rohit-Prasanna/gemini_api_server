@@ -27,7 +27,12 @@ func main() {
 	r.HandleFunc("/api/text", handlers.TextHandler).Methods("POST")
 	r.HandleFunc("/api/image", handlers.ImageHandler).Methods("POST")
 
-	// Start the server with CORS enabled
-	log.Println("Server is running on port 8080...")
-	log.Fatal(http.ListenAndServe(":8080", corsHandler))
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080" // Default to 8080 if no port is specified
+	}
+
+	// Start the server with the CORS handler on the correct port
+	log.Printf("Server is running on port %s", port)
+	log.Fatal(http.ListenAndServe(":"+port, corsHandler))
 }
