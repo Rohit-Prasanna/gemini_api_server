@@ -5,7 +5,9 @@ import (
 	"encoding/base64"
 	"fmt"
 	"github.com/google/generative-ai-go/genai"
+	"github.com/joho/godotenv"
 	"google.golang.org/api/option"
+	"os"
 )
 
 // GenAIClient wraps the Generative AI client.
@@ -14,10 +16,22 @@ type GenAIClient struct {
 }
 
 // NewGenAIClient initializes and returns a new GenAI client.
-func NewGenAIClient(apiKey string) (*GenAIClient, error) {
+func NewGenAIClient() (*GenAIClient, error) {
+	// Load environment variables from .env file
+	err := godotenv.Load()
+	if err != nil {
+		return nil, fmt.Errorf("Error loading .env file")
+	}
+
+	// Get the API key from environment variable
+	apiKey := os.Getenv("GEMINI_API_KEY")
+	if apiKey == "" {
+		return nil, fmt.Errorf("GEMINI_API_KEY is required but not set in the environment")
+	}
+
+	// Create a new GenAI client using the API key
 	ctx := context.Background()
 
-	// Initialize the Generative AI client with the API key
 	client, err := genai.NewClient(ctx, option.WithAPIKey(apiKey))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create Generative AI client: %v", err)
@@ -31,7 +45,7 @@ func (c *GenAIClient) GenerateText(prompt string) (string, error) {
 	ctx := context.Background()
 
 	// Select the generative model
-	model := c.client.GenerativeModel("gemini-1.5-flash")
+	model := c.client.GenerativeModel("gemini-1.5-flash-latest")
 
 	// Generate content using the model
 	resp, err := model.GenerateContent(ctx, genai.Text(prompt))

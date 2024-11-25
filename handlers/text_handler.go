@@ -42,7 +42,7 @@ func TextHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Initialize the GenAI client
-	client, err := utils.NewGenAIClient("AIzaSyDW-3zcMNqDAxTLTOUvHJqLvkjCHlZr6yY")
+	client, err := utils.NewGenAIClient()
 	if err != nil {
 		log.Printf("Error creating GenAI client: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
